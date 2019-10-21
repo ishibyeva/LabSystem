@@ -73,8 +73,8 @@ namespace CMLabKAB1
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            dataGridView1.Rows.Clear();
             RezOsn2();
-
         }
         
         private void textBox1_TextChanged_1(object sender, EventArgs e)
