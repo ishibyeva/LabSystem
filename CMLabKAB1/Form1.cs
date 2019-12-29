@@ -41,8 +41,8 @@ namespace CMLabKAB1
         Form2 form = new Form2();
        
 
-        int maxnum,xn;
-        double a1, b1, c1, a2, b2, c2, d1, d2, x0, u001, u002, u003, h00, E;
+        int maxnum;
+        double a1, b1, c1, a2, b2, c2, d1, d2, u001, u002, u003, h00, E,xn;
         public Form1()
         {
             InitializeComponent();
@@ -55,7 +55,7 @@ namespace CMLabKAB1
 
             maxnum = int.Parse(textBox1.Text);
             E = double.Parse(textBox2.Text);
-            xn = int.Parse(textBox1.Text);
+            xn = double.Parse(textBox4.Text);
             a1 = double.Parse(textBox11.Text);
             b1 = double.Parse(textBox12.Text);
             c1 = double.Parse(textBox13.Text);
@@ -99,15 +99,19 @@ namespace CMLabKAB1
             GraphPane pane5 = zedGraphControl5.GraphPane;
             GraphPane pane6 = zedGraphControl6.GraphPane;
 
-            pane1.Title = "Graphics x|y1"; pane2.Title = "Graphics x|y2";
-            pane3.Title = "Graphics x|y3";
-            pane4.Title = "Graphics y1|y2"; pane5.Title = "Graphics y2|y3";
-            pane6.Title = "Graphics y1|y3";
+            pane1.Title = "Зависимость популяции 1 от времени"; pane2.Title = "Зависимость популяции 2 от времени";
+            pane3.Title = "Зависимость популяции 3 от времени";
+            pane4.Title = "Зависимость 1 от 2"; pane5.Title = "Зависимость 2 от 3";
+            pane6.Title = "Зависимость 1 от 3";
 
-            pane4.XAxis.Title = "Y1-Axis"; pane5.XAxis.Title = "Y2-Axis";
-            pane6.XAxis.Title = "Y1-Axis";
-            pane4.YAxis.Title = "Y2-Axis"; pane5.YAxis.Title = "Y3-Axis";
-            pane6.YAxis.Title = "Y3-Axis";
+            pane1.XAxis.Title = "Время"; pane2.XAxis.Title = "Время";
+            pane3.XAxis.Title = "Время";
+            pane1.YAxis.Title = "Численность популяции 1"; pane2.YAxis.Title = "Численность популяции 2";
+            pane3.YAxis.Title = "Численность популяции 3";
+            pane4.XAxis.Title = "Численность популяции 1"; pane5.XAxis.Title = "Численность популяции 2";
+            pane6.XAxis.Title = "Численность популяции 1";
+            pane4.YAxis.Title = "Численность популяции 2"; pane5.YAxis.Title = "Численность популяции 3";
+            pane6.YAxis.Title = "Численность популяции 3";
 
             PointPairList list1 = new PointPairList();
             PointPairList list2 = new PointPairList();
@@ -234,7 +238,7 @@ namespace CMLabKAB1
                 textBox4.Text = newText;
                 textBox4.SelectionStart = sstart - 1;
             }
-            xn = int.Parse(textBox4.Text);
+            xn = double.Parse(textBox4.Text);
         }
 
 
@@ -401,9 +405,15 @@ namespace CMLabKAB1
            GraphPane pane1 = zedGraphControl1.GraphPane;
             GraphPane pane2 = zedGraphControl2.GraphPane;
             GraphPane pane3 = zedGraphControl3.GraphPane;
+            GraphPane pane4 = zedGraphControl4.GraphPane;
+            GraphPane pane5 = zedGraphControl5.GraphPane;
+            GraphPane pane6 = zedGraphControl6.GraphPane;
             pane1.CurveList.Clear();
             pane2.CurveList.Clear();
             pane3.CurveList.Clear();
+            pane4.CurveList.Clear();
+            pane5.CurveList.Clear();
+            pane6.CurveList.Clear();
 
         }
 
@@ -457,18 +467,18 @@ namespace CMLabKAB1
            b1= double.Parse(textBox12.Text);
         }
 
-        double osnov2y3(double x, double u1, double u2, double u3, double d1, double d2)//f3'
+        double osnov2y3(double x, double u1, double u2, double u3)//f3'
         {
             double y3 = u3 * (-1 + u1 * d1 + d2 * u2);
             return y3;
         }
-        double osnov2y1(double x, double u1, double u2, double u3, double a1, double b1, double c1)//f1'
+        double osnov2y1(double x, double u1, double u2, double u3)//f1'
         {
             double y1 = u1 * (a1 - u1 - c1 * u2 - b1 * u3);
             return y1;
         }
 
-        double osnov2y2(double x, double u1, double u2, double u3, double a2, double b2, double c2)//f2'
+        double osnov2y2(double x, double u1, double u2, double u3)//f2'
         {
             double y2 = u2 * (a2 - c2 * u1 - u2 - b2 * u3);
             return y2;
@@ -479,21 +489,31 @@ namespace CMLabKAB1
             double v2 = u2;
             double v3 = u3;
 
-            double k1 = 0, k2 = 0;
+            double k1 = 0, k2 = 0, k3=0, k4=0,l1=0,l2=0,l3=0,l4=0, z3=0,z4=0,z1=0,z2=0;
             //
-            k1 = osnov2y1(x + (0.5 - 0.2886751) * h, u1 + (h * 0.25) * k1 + (0.25 - 0.2886751) * h * k2, u2, u3, a1, b1, c1);
-            k2 = osnov2y1(x + (0.5 + 0.2886751) * h, u1 + (0.25 + 0.2886751) * h * k1 + k2 * (h * 0.25), u2, u3, a1, b1, c1);
-            v1 = v1 + (h / 2) * (k1 + k2);
 
-            k1 = 0; k2 = 0;
-            k1 = osnov2y2(x + (0.5 - 0.2886751) * h, u1, u2 + (h * 0.25) * k1 + (0.25 - 0.2886751) * h * k2, u3, a2, b2, c2);
-            k2 = osnov2y2(x + (0.5 + 0.2886751) * h, u1, u2 + (0.25 + 0.2886751) * h * k1 + k2 * (h * 0.25), u3, a2, b2, c2);
-            v2 = v2 + (h / 2) * (k1 + k2);
+            k1 = osnov2y1(x, u1, u2,u3);
+            l1 = osnov2y2(x, u1, u2, u3);
+            z1 = osnov2y3(x, u1, u2, u3);
+            k2 = osnov2y1(x + (h / 2), u1 + (h / 2.0) * k1, u2 + (h / 2.0) * l1, u3+(h/2.0)*z1);
+            l2 = osnov2y2(x + (h / 2), u1 + (h / 2) * k1, u2 + (h / 2) * l1, u3 + (h / 2.0) * z1);
+            z2 = osnov2y3(x + (h / 2), u1 + (h / 2) * k1, u2 + (h / 2) * l1, u3 + (h / 2.0) * z1);
 
-            k1 = 0; k2 = 0;
-            k1 = osnov2y3(x + (0.5 - 0.2886751) * h, u1, u2, u3 + (h * 0.25) * k1 + (0.25 - 0.2886751) * h * k2, d1, d2);
-            k2 = osnov2y3(x + (0.5 + 0.2886751) * h, u1, u2, u3 + (0.25 + 0.2886751) * h * k1 + k2 * (h * 0.25), d1, d2);
-            v3 = v3 + (h / 2) * (k1 + k2);
+            k3 = osnov2y1(x + (h / 2.0), u1 + (h / 2.0) * k2, u2 + (h / 2.0) * l2,u3+(h/2.0)*z2);
+            l3 = osnov2y2(x + (h / 2.0), u1 + (h / 2.0) * k2, u2 + (h / 2.0) * l2, u3 + (h / 2.0) * z2);
+            z3 = osnov2y3(x + (h / 2.0), u1 + (h / 2.0) * k2, u2 + (h / 2.0) * l2, u3 + (h / 2.0) * z2);
+
+            k4 = osnov2y1(x + h, u1 + h * k3, u2 + h * l3,u3+h*z3);
+            l4 = osnov2y2(x + h, u1 + h * k3, u2 + h * l3, u3 + h * z3);
+            z4 = osnov2y3(x + h, u1 + h * k3, u2 + h * l3, u3 + h * z3);
+
+            v1 = u1+ (h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
+            v2=u2+(h / 6.0) * (l1 + 2 * l2 + 2 * l3 + l4);
+            v3 = u3 + (h / 6.0) * (z1 + 2 * z2 + 2 * z3 + z4);
+
+
+
+
 
             x += h;
 
@@ -566,8 +586,8 @@ namespace CMLabKAB1
             int n = maxnum, dstep=0, ustep=0;
             //xn - ãðàíèöà îòðåçêà èíòåãðèðîâàíèÿ
             //
-          
 
+            dataGridView1.RowCount = maxnum;
             Point t;
             t.num = 0;
             t.x = x0;
@@ -586,13 +606,11 @@ namespace CMLabKAB1
             e12.x3 = 0;
 
             int i = 1;
-            dataGridView1.Rows.Add();
             dataGridView1.Rows[0].Cells[0].Value = 0;
             dataGridView1.Rows[0].Cells[1].Value = h00;
             while (i < n)
             {
                 Point t1, t12, t2;
-                dataGridView1.Rows.Add();
                 dataGridView1.Rows[i].Cells[0].Value = i;
 
                 //(x(n+1),v(n+1))
@@ -615,32 +633,30 @@ namespace CMLabKAB1
                 //(x(n),Y(n))	
 
                 t2 = metodRKS(i, h0 * (0.5), t12.x, t12.y1, t12.y2, t12.y3, a1, b1, c1, a2, b2, c2, d1, d2);
-
+                dataGridView1.Rows[i].Cells[5].Value = t2.y1;
+                dataGridView1.Rows[i].Cells[6].Value = t2.y2;
+                dataGridView1.Rows[i].Cells[7].Value = t2.y3;
                 double en1 = t2.y1 - t1.y1;
                 double en2 = t2.y2 - t1.y2;
                 double en3 = t2.y3 - t1.y3;
                 e12.x1 = en1;
                 e12.x2 = en2;
                 e12.x3 = en3;
-                dataGridView1.Rows[i].Cells[5].Value = Math.Round(en1,6);
-                dataGridView1.Rows[i].Cells[6].Value = Math.Round(en2,6);
-                dataGridView1.Rows[i].Cells[7].Value = Math.Round(en3,6);
+                dataGridView1.Rows[i].Cells[8].Value = Math.Round(en1,9);
+                dataGridView1.Rows[i].Cells[9].Value = Math.Round(en2,9);
+                dataGridView1.Rows[i].Cells[10].Value = Math.Round(en3,9);
 
-                double S = max(en1, en2, en3);
+                double S = max(Math.Abs(en1), Math.Abs(en2), Math.Abs(en3));
 
                 
-                if (S < 0)
-                    S = (-1) * S;
+                
                 int p = 4;
-                e[i] = S;
-                dataGridView1.Rows[i].Cells[8].Value = Math.Round(S, 6);
-
-                dataGridView1.Rows[i].Cells[9].Value = Math.Round(Math.Pow(2, p) * S, 6);
+                e[i] = S*Math.Pow(2,p);
 
                 if (S < E / (Math.Pow(2, p + 1)))
                 {
                     h0 = 2.0 * h0;
-                    dataGridView1.Rows[i].Cells[11].Value = 1;
+                    dataGridView1.Rows[i].Cells[13].Value = 1;
                     dstep++;
                     mas[i] = t2;
                     p2++;
@@ -654,12 +670,12 @@ namespace CMLabKAB1
                 if (S > E)
                 {
                     h0 = h0 * (0.5);
-                    dataGridView1.Rows[i].Cells[12].Value = 1;
+                    dataGridView1.Rows[i].Cells[14].Value = 1;
                     ustep++;
                     p1++;
                     h[i] = h0;
                 }
-                if ((S > E / (Math.Pow(2, p + 1))) || (S < E))
+                if ((S > E / (Math.Pow(2, p + 1))) && (S < E))
                 {
                     mas[i] = t2;
                     //h0 = h0;
@@ -674,24 +690,25 @@ namespace CMLabKAB1
 
             }
 
-            double maxolp = 0, maxh = 0, minh = 0;
+            double maxolp = 0, maxh = 0, minh = 100;
             
             for (int d = 0; (d < i) && (mas[d].x < xn); d++)
             {
-                dataGridView1.Rows[d].Cells[13].Value = Math.Round(mas[d].y1, 6);
-                dataGridView1.Rows[d].Cells[14].Value = Math.Round(mas[d].y2, 6);
-                dataGridView1.Rows[d].Cells[15].Value = Math.Round(mas[d].y3, 6);
-                dataGridView1.Rows[d].Cells[8].Value = Math.Round(e[d], 6);
-                dataGridView1.Rows[d].Cells[1].Value = Math.Round(mas[d].x, 6);
-                dataGridView1.Rows[d].Cells[10].Value = Math.Round(h[d], 6);
-                maxolp = Math.Max(e[d]*4,maxolp);
+                dataGridView1.Rows[d].Cells[15].Value = Math.Round(mas[d].y1, 9);
+                dataGridView1.Rows[d].Cells[16].Value = Math.Round(mas[d].y2, 9);
+                dataGridView1.Rows[d].Cells[17].Value = Math.Round(mas[d].y3, 9);
+                dataGridView1.Rows[d].Cells[11].Value = Math.Round(e[d], 9);
+                dataGridView1.Rows[d].Cells[1].Value = Math.Round(mas[d].x, 9);
+                dataGridView1.Rows[d].Cells[12].Value = Math.Round(h[d], 9);
+                maxolp = Math.Max(e[d],maxolp);
                 maxh = Math.Max(h[d], maxh);
                 minh = Math.Min(h[d], minh);
-                form.label13.Text = Convert.ToString(maxolp);
-                form.label14.Text = Convert.ToString(maxh);
-                form.label16.Text = Convert.ToString(minh);
+                
 
             }
+            form.label13.Text = Convert.ToString(maxolp);
+            form.label14.Text = Convert.ToString(maxh);
+            form.label16.Text = Convert.ToString(minh);
             dataGridView1.RowCount = i;
             form.label11.Text = Convert.ToString(i);
             form.label9.Text = Convert.ToString(dstep);
